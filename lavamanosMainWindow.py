@@ -1,6 +1,7 @@
 from PyQt5 import uic, QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
 import RPi.GPIO as GPIO
 from widgetDeTexto import widgetDeTexto
+import vlc
 
 mainWindow = uic.loadUiType("UI/mainwindow.ui")[0]
 
@@ -9,9 +10,10 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
-        self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
-        self.videoWidget = QtMultimediaWidgets.QVideoWidget()
-        self.mediaPlayer.setVideoOutput(self.videoWidget)
+        #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
+        #self.videoWidget = QtMultimediaWidgets.QVideoWidget()
+        #self.mediaPlayer.setVideoOutput(self.videoWidget)
+
 
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.videoWidget)
