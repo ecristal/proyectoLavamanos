@@ -11,9 +11,10 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.setupUi(self)
 
         #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
-        #self.videoWidget = QtMultimediaWidgets.QVideoWidget()
+        self.videoWidget = QtWidgets.QFrame()
         #self.mediaPlayer.setVideoOutput(self.videoWidget)
-
+        self.instanciaDeVideo = vlc.Instance()
+        self.mediaPlayer() = self.instanciaDeVideo.media_player_new()
 
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.videoWidget)
@@ -42,7 +43,11 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         indiceVideo = self.videoListView.currentIndex()
         direccionVideo = indiceVideo.data(QtCore.Qt.DisplayRole)
         print(direccionVideo)
-        self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(direccionVideo)))
+        media = self.instanciaDeVideo.media_new(direccionVideo)
+        self.mediaPlayer.set_media(media)
+        self.media.parse()
+        self.mediaPlayer.set_xwindow(self.videoFrame.windId())
+        #self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(direccionVideo)))
         self.mediaPlayer.play()
 
     def bStopPressed(self):
