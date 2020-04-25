@@ -1,5 +1,5 @@
 from PyQt5 import uic, QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
-from PyQt5 import QProcess
+from PyQt5.QtCore import QProcess
 
 import RPi.GPIO as GPIO
 

@@ -14,7 +14,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.videoWidget = QtWidgets.QFrame()
         #self.mediaPlayer.setVideoOutput(self.videoWidget)
         self.instanciaDeVideo = vlc.Instance()
-        self.mediaPlayer() = self.instanciaDeVideo.media_player_new()
+        self.mediaPlayer = self.instanciaDeVideo.media_player_new()
 
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.videoWidget)
@@ -45,8 +45,8 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         print(direccionVideo)
         media = self.instanciaDeVideo.media_new(direccionVideo)
         self.mediaPlayer.set_media(media)
-        self.media.parse()
-        self.mediaPlayer.set_xwindow(self.videoFrame.windId())
+        media.parse()
+        self.mediaPlayer.set_xwindow(self.videoFrame.winId())
         #self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(direccionVideo)))
         self.mediaPlayer.play()
 
