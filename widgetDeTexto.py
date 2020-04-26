@@ -17,15 +17,21 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         self.videoWidget = QtWidgets.QFrame()
         self.instanciaDeVideo = vlc.Instance()
+        self.mediaListPlayer = self.instanciaDeVideo.media_list_player_new()
         self.mediaPlayer = self.instanciaDeVideo.media_player_new()
+
+        self.mediaPlayer.set_fullscreen(True)
+
+        self.mediaListPlayer.set_media_player(self.mediaPlayer)
 
         self.playlist = self.instanciaDeVideo.media_list_new()
         self.listaDeReproduccion = []
 
-        self.playlist = MediaList()
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.videoWidget)
         self.setLayout(layout)
+
+        #self.mediaPlayer.set_xwindow(self.videoWidget.winId())
 
         #GPIO.setmode(GPIO.BCM)
         #GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Canilla
@@ -46,10 +52,10 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
     def setListaDeReproduccion(self,listaDeReproduccion):
         self.listaDeReproduccion = listaDeReproduccion
         for video in self.listaDeReproduccion:
-            media = self.instanciaDeVideo.media_new(direccionVideo)
+            media = self.instanciaDeVideo.media_new(video)
             self.playlist.add_media(media)
             #self.playlist.addMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(video)))
         #self.playlist.setCurrentIndex(1)
         #self.mediaPlayer.setPlaylist(self.playlist)
-        self.mediaPlayer.set_media_list(self.playlist)
-        self.mediaPlayer.play()
+        self.mediaListPlayer.set_media_list(self.playlist)
+        self.mediaListPlayer.play()
