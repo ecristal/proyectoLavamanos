@@ -17,7 +17,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         self.texto = QtWidgets.QLabel()
         self.texto.setFixedHeight(300)
-        self.texto.setFixedWidth(1080)
+        self.texto.setFixedWidth(2000)
         self.texto.setText('HOLA MUNDO')
         font = QtGui.QFont('Arial',200)
         self.texto.setFont(font)
@@ -79,12 +79,12 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         #GPIO.add_event_detect(23, GPIO.FALLING, callback=gpio23_Interrupted, bouncetime=300)
         #GPIO.add_event_detect(24, GPIO.FALLING, callback=gpio24_Interrupted, bouncetime=300)
-    def inicioDeSecuenciaDeLavado(Self):
-        self.texto.setText("La OMS recomienda un lavado especial de manos.\nLa duracion es de 40-60 segundos")
-        font = QtGui.QFont("Arial",75)
+    def inicioDeSecuenciaDeLavado(self):
+        self.texto.setText("La OMS recomienda un lavado especial de manos.\nSu duracion es de 40 segundos")
+        font = QtGui.QFont("Arial",50)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
-        self.timerInicioDeSecuenciaLavado.start(5000)
+        self.timerInicioDeSecuenciaLavado.start(6000)
 
     def timeoutTimerInicioDeSecuencia(self):
         self.timerInicioDeSecuenciaLavado.stop()
@@ -97,31 +97,31 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
     def timeoutTimerUnSegundoLavado(self):
         self.contadorUnSegundoLavado = self.contadorUnSegundoLavado + 1
-        self.texto.setText("0")
+        self.texto.setText(str(self.contadorUnSegundoLavado))
         font = QtGui.QFont("Arial",200)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
-        if (self.contadorUnSegundoLavado > 55):
+        if (self.contadorUnSegundoLavado > 40):
             self.timerUnSegundoLavado.stop()
             self.timerInicioDeEnjuague.start(10000)
             self.texto.setText("Puede enjuagarse las manos")
-            font = QtGui.QFont("Arial",200)
+            font = QtGui.QFont("Arial",100)
             self.texto.setFont(font)
             self.texto.setAlignment(QtCore.Qt.AlignCenter)
             self.contadorUnSegundoLavado = 0
 
     def timeoutTimerInicioDeEnjuague(self):
         self.timerInicioDeEnjuague.stop()
-        self.texto.setText("Gracias por colaborar")
-        font = QtGui.QFont("Arial",200)
+        self.texto.setText("No olvide secarse las manos.\nGracias por colaborar")
+        font = QtGui.QFont("Arial",50)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
-        self.timerMensajeFinal.start(3000)
+        self.timerMensajeFinal.start(5000)
 
     def timeoutTimerMensajeFinal(self):
         self.timerMensajeFinal.stop()
-        self.texto.setText("FIN")
-        font = QtGui.QFont("Arial",200)
+        self.texto.setText("Que tenga un buen dia.")
+        font = QtGui.QFont("Arial",120)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
 
