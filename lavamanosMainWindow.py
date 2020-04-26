@@ -70,6 +70,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
     #        print('HOLA')
     #        self.videoWidget.setFullScreen(False)
     #        event.accept()
+    # prueba ccp
 
 if __name__ == "__main__":
     import sys
