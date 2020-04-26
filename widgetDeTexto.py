@@ -17,7 +17,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         self.texto = QtWidgets.QLabel()
         self.texto.setFixedHeight(300)
-        self.texto.setText('HOLA MUNDO: LAVATE LAS MANOS')
+        self.texto.setText('HOLA MUNDO')
         font = QtGui.QFont('Arial',200)
         self.texto.setFont(font)
         self.videoFrame = QtWidgets.QFrame()
@@ -36,9 +36,14 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         layoutH = QtWidgets.QHBoxLayout()
         layoutH.addWidget(self.texto)
 
+        layoutH2 = QtWidgets.QHBoxLayout()
+        layoutH2.addWidget(self.videoFrame)
+
         layoutV = QtWidgets.QVBoxLayout()
-        layoutV.addWidget(self.videoFrame)
+        layoutV.addLayout(layoutH2)
         layoutV.addLayout(layoutH)
+
+        #layoutV.setAlignment(QtCore.Qt.AlignBottom)
 
         self.setLayout(layoutV)
 
@@ -72,4 +77,4 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #self.playlist.setCurrentIndex(1)
         #self.mediaPlayer.setPlaylist(self.playlist)
         self.mediaListPlayer.set_media_list(self.playlist)
-        self.mediaListPlayer.play()
+        #self.mediaListPlayer.play()
