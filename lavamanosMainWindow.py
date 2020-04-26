@@ -58,12 +58,13 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
 
     def bIniciarProgramaPressed(self):
         print('bIniciarProgramaPressed')
+        self.mediaPlayer.stop()
         dialogDeMensajes = widgetDeTexto()
         dialogDeMensajes.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowType_Mask)
         dialogDeMensajes.showFullScreen()
         dialogDeMensajes.setListaDeReproduccion(self.listaDeVideos)
         dialogDeMensajes.exec_()
-        GPIO.cleanup()
+        #GPIO.cleanup()
     #def keyPressEvent(self, event):
     #    if (event.key() == QtCore.Qt.Key_Escape) and (self.videoWidget.isFullScreen() == False):
     #        print('HOLA')
