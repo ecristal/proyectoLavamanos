@@ -18,7 +18,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto = QtWidgets.QLabel()
         self.texto.setFixedHeight(300)
         self.texto.setText('HOLA MUNDO: LAVATE LAS MANOS')
-        font = QtWidgets.QFont('Arial',200)
+        font = QtGui.QFont('Arial',200)
         self.texto.setFont(font)
         self.videoFrame = QtWidgets.QFrame()
         self.instanciaDeVideo = vlc.Instance()
@@ -37,7 +37,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         layoutV = QtWidgets.QVBoxLayout()
         layoutV.addWidget(self.videoFrame)
-        layoutV.addLayout(self.layoutH)
+        layoutV.addLayout(layoutH)
+
+        self.setLayout(layoutV)
 
         #self.mediaPlayer.set_xwindow(self.videoWidget.winId())
 
