@@ -24,6 +24,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.instanciaDeVideo = vlc.Instance()
         self.mediaListPlayer = self.instanciaDeVideo.media_list_player_new()
         self.mediaPlayer = self.instanciaDeVideo.media_player_new()
+        self.mediaPlayerLavamanos = self.instanciaDeVideo.media_player_new()
 
         self.mediaPlayer.set_fullscreen(True)
 
@@ -41,7 +42,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         self.setLayout(layoutV)
 
-        #self.mediaPlayer.set_xwindow(self.videoWidget.winId())
+        self.mediaPlayerLavamanos.set_xwindow(self.videoFrame.winId())
 
         #GPIO.setmode(GPIO.BCM)
         #GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Canilla
@@ -61,6 +62,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
     def setListaDeReproduccion(self,listaDeReproduccion):
         self.listaDeReproduccion = listaDeReproduccion
+        media = self.instanciaDeVideo.media_new(self.listaDeReproduccion[0])
+        self.mediaPlayerLavamanos.set_media(media)
+        self.mediaPlayerLavamanos.play()
         for video in self.listaDeReproduccion:
             media = self.instanciaDeVideo.media_new(video)
             self.playlist.add_media(media)
