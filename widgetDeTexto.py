@@ -26,9 +26,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto.setFont(font)
         self.videoFrame = QtWidgets.QFrame()
         self.instanciaDeVideo = vlc.Instance()
-        self.instanciaDeVideoPublicidad = vlc.Instance()
+        #self.instanciaDeVideoPublicidad = vlc.Instance()
         self.mediaListPlayer = self.instanciaDeVideo.media_list_player_new()
-        self.mediaPlayer = self.instanciaDeVideoPublicidad.media_player_new()
+        self.mediaPlayer = self.instanciaDeVideo.media_player_new()
         self.mediaPlayerLavamanos = self.instanciaDeVideo.media_player_new()
 
         self.mediaListPlayer.set_playback_mode(vlc.PlaybackMode.loop)
