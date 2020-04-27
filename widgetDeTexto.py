@@ -61,15 +61,15 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
 
         self.timerInicioDeEnjuague = QtCore.QTimer() # esto crea el timer llamano timeriniciodenjuague
-        self.timerInicioDeEnjuague.timeout.connect(self.timeoutTimerInicioDeEnjuague) ## conecta la senha .timeout a timerenjuague 
+        self.timerInicioDeEnjuague.timeout.connect(self.timeoutTimerInicioDeEnjuague) ## conecta la senha .timeout a timerenjuague
 
-        self.timerMensajeFinal = QtCore.QTimer()  
+        self.timerMensajeFinal = QtCore.QTimer()
         self.timerMensajeFinal.timeout.connect(self.timeoutTimerMensajeFinal)
 
         self.timerCheckSensorJabon = QtCore.QTimer()
         self.timerCheckSensorJabon.timeout.connect(self.timeoutTimerCheckSensorJabon)
         self.timerCheckSensorJabon.start(250)
-        
+
         self.timerCheckSensorAgua = QtCore.QTimer()
         self.timerCheckSensorAgua.timeout.connect(self.timeoutTimerCheckSensorAgua)
         self.timerCheckSensorAgua.start(250)
@@ -86,9 +86,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Canilla
         GPIO.setup(23, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Jabon entrada
         GPIO.setup(8, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Agua entrada
-        GPIO.setup(24, GPIO.OUT) # Jabon salida 
-        GPIO.setup(25, GPIO.OUT) # salida de agua 
-        
+        GPIO.setup(24, GPIO.OUT) # Jabon salida
+        GPIO.setup(25, GPIO.OUT) # salida de agua
+
         GPIO.output(24,GPIO.HIGH)
         GPIO.output(25,GPIO.HIGH)
 
@@ -107,11 +107,11 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
             self.inicioDeSecuenciaDeLavado()
-        if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaDispensarJabon == 0): 
+        if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaDispensarJabon == 0):
              GPIO.output(24,GPIO.LOW)
              self.banderaEjecucionSecuenciaDispensarJabon = 1
              self.timerDispensandoJabon.start(2000)
-    
+
     def timeoutTimerCheckSensorAgua(self):
         if ((not GPIO.input(8)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
@@ -120,7 +120,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
     def timeoutTimerDispensandoJabon(self):
         GPIO.output(24,GPIO.HIGH)
         self.timerDispensandoJabon.stop()
-        self.banderaEjecucionSecuenciaDispensarJabon = 0 
+        self.banderaEjecucionSecuenciaDispensarJabon = 0
 
     def inicioDeSecuenciaDeLavado(self):
         self.texto.setText("La OMS recomienda un lavado especial de manos.\nSu duracion es de 35 segundos")
@@ -174,6 +174,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.banderaEjecucionSecuenciaLavado = 0
+        self.mediaListPlayer.play()
 
     def setListaDeReproduccion(self,listaDeReproduccion):
         self.listaDeReproduccion = listaDeReproduccion
@@ -182,10 +183,13 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #self.mediaPlayerLavamanos.play()
         #self.mediaPlayerLavamanos.pause()
         #self.inicioDeSecuenciaDeLavado()
+        i = 0
         for video in self.listaDeReproduccion:
-            self.media = self.instanciaDeVideo.media_new(video)
-            self.playlist.add_media(self.media)
-            #self.playlist.addMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(video)))
+            if(i != 0):
+                self.media = self.instanciaDeVideo.media_new(video)
+                self.playlist.add_media(self.media)
+                i = i + 1
+                #self.playlist.addMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(video)))
         #self.playlist.setCurrentIndex(1)
         #self.mediaPlayer.setPlaylist(self.playlist)
         self.mediaListPlayer.set_media_list(self.playlist)
