@@ -71,6 +71,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.timerMensajeFinal = QtCore.QTimer()
         self.timerMensajeFinal.timeout.connect(self.timeoutTimerMensajeFinal)
 
+        self.timerFinLavado = QtCore.QTimer()
+        self.timerFinLavado.timeout.connect(self.timeoutTimerFinLavado)
+
         self.timerCheckSensorJabon = QtCore.QTimer()
         self.timerCheckSensorJabon.timeout.connect(self.timeoutTimerCheckSensorJabon)
         self.timerCheckSensorJabon.start(250)
@@ -183,6 +186,10 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.banderaEjecucionSecuenciaLavado = 0
+        self.timerFinLavado.start(3000)
+
+    def timeoutTimerFinLavado(self):
+        self.timerFinLavado.stop()
         self.setWindowState(QtCore.Qt.WindowMinimized)
         self.mediaListPlayer.pause()
 
