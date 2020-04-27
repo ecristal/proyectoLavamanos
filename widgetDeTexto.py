@@ -2,11 +2,11 @@ from PyQt5 import uic, QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidge
 import vlc
 import RPi.GPIO as GPIO
 
-widget_ui_ = uic.loadUiType("UI/widgetDeTexto.ui")[0]
+widget_ui_ = uic.loadUiType("/home/pi/proyectoLavamanos/UI/widgetDeTexto.ui")[0]
 
 class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
-    def __init__(self, parent=None):
-        QtWidgets.QMainWindow.__init__(self, parent)
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
 
         self.widgetReproductorDePublicidad = QtWidgets.QWidget()
@@ -99,6 +99,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         GPIO.output(24,GPIO.HIGH)
         GPIO.output(25,GPIO.HIGH)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         #def gpio23_Interrupted(canal):
         #    print('Interrupcion en el pin 23')
@@ -208,3 +209,10 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #self.mediaPlayer.setPlaylist(self.playlist)
         self.mediaListPlayer.set_media_list(self.playlist)
         self.mediaListPlayer.play()
+    
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Escape:
+            #GPIO.cleanup()
+            self.mediaListPlayer.stop()
+            self.mediaPlayerLavamanos.stop()
+            self.accept()

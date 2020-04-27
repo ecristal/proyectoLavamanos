@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 from widgetDeTexto import widgetDeTexto
 import vlc
 
-mainWindow = uic.loadUiType("UI/mainwindow.ui")[0]
+mainWindow = uic.loadUiType("/home/pi/proyectoLavamanos/UI/mainwindow.ui")[0]
 
 class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
     def __init__(self, parent=None):
@@ -59,10 +59,12 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
     def bIniciarProgramaPressed(self):
         print('bIniciarProgramaPressed')
         self.mediaPlayer.stop()
-        dialogDeMensajes = widgetDeTexto()
+        dialogDeMensajes = widgetDeTexto(self)
         dialogDeMensajes.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowType_Mask)
-        dialogDeMensajes.showMinimized()
+        #dialogDeMensajes.showMinimized()
+        #dialogDeMensajes.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         dialogDeMensajes.setListaDeReproduccion(self.listaDeVideos)
+        dialogDeMensajes.showMinimized()
         dialogDeMensajes.exec_()
         GPIO.cleanup()
     #def keyPressEvent(self, event):
