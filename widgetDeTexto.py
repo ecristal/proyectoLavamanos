@@ -9,6 +9,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
+        self.widgetReproductorDePublicidad = QtWidgets.QWidget()
+        self.widgetReproductorDePublicidad.showFullScreen()
+
         #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
         #self.videoWidget = QtMultimediaWidgets.QVideoWidget()
         #self.mediaPlayer.setVideoOutput(self.videoWidget)
@@ -23,11 +26,12 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto.setFont(font)
         self.videoFrame = QtWidgets.QFrame()
         self.instanciaDeVideo = vlc.Instance()
+        self.instanciaDeVideoPublicidad = vlc.Instance()
         self.mediaListPlayer = self.instanciaDeVideo.media_list_player_new()
-        self.mediaPlayer = self.instanciaDeVideo.media_player_new()
+        self.mediaPlayer = self.instanciaDeVideoPublicidad.media_player_new()
         self.mediaPlayerLavamanos = self.instanciaDeVideo.media_player_new()
 
-        self.mediaPlayer.set_fullscreen(True)
+        self.mediaListPlayer.set_playback_mode(vlc.PlaybackMode.loop)
 
         self.mediaListPlayer.set_media_player(self.mediaPlayer)
 
@@ -51,6 +55,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.setLayout(layoutV)
 
         self.mediaPlayerLavamanos.set_xwindow(self.videoFrame.winId())
+        self.mediaPlayer.set_xwindow(self.widgetReproductorDePublicidad.winId())
 
         self.timerInicioDeSecuenciaLavado = QtCore.QTimer()
         self.timerInicioDeSecuenciaLavado.timeout.connect(self.timeoutTimerInicioDeSecuencia)
@@ -80,7 +85,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.timerDispensandoJabon = QtCore.QTimer()
         self.timerDispensandoJabon.timeout.connect(self.timeoutTimerDispensandoJabon)
 
-
+        self.setWindowState(QtCore.Qt.WindowMinimized)
 
         GPIO.setmode(GPIO.BCM)
         #GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Canilla
@@ -107,15 +112,19 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
             self.inicioDeSecuenciaDeLavado()
+            self.mediaListPlayer.pause()
+            self.setWindowState(QtCore.Qt.WindowFullScreen)
         if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaDispensarJabon == 0):
-             GPIO.output(24,GPIO.LOW)
-             self.banderaEjecucionSecuenciaDispensarJabon = 1
-             self.timerDispensandoJabon.start(2000)
+            GPIO.output(24,GPIO.LOW)
+            self.banderaEjecucionSecuenciaDispensarJabon = 1
+            self.timerDispensandoJabon.start(2000)
 
     def timeoutTimerCheckSensorAgua(self):
         if ((not GPIO.input(8)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
             self.inicioDeSecuenciaDeLavado()
+            self.mediaListPlayer.pause()
+            self.setWindowState(QtCore.Qt.WindowFullScreen)
 
     def timeoutTimerDispensandoJabon(self):
         GPIO.output(24,GPIO.HIGH)
@@ -174,7 +183,8 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.banderaEjecucionSecuenciaLavado = 0
-        self.mediaListPlayer.play()
+        self.setWindowState(QtCore.Qt.WindowMinimized)
+        self.mediaListPlayer.pause()
 
     def setListaDeReproduccion(self,listaDeReproduccion):
         self.listaDeReproduccion = listaDeReproduccion
@@ -183,14 +193,11 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #self.mediaPlayerLavamanos.play()
         #self.mediaPlayerLavamanos.pause()
         #self.inicioDeSecuenciaDeLavado()
-        i = 0
-        for video in self.listaDeReproduccion:
-            if(i != 0):
-                self.media = self.instanciaDeVideo.media_new(video)
-                self.playlist.add_media(self.media)
-                i = i + 1
-                #self.playlist.addMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(video)))
+        for i in range(1,len(self.listaDeReproduccion)):
+            self.media = self.instanciaDeVideo.media_new(self.listaDeReproduccion[i])
+            self.playlist.add_media(self.media)
+            #self.playlist.addMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(video)))
         #self.playlist.setCurrentIndex(1)
         #self.mediaPlayer.setPlaylist(self.playlist)
         self.mediaListPlayer.set_media_list(self.playlist)
-        #self.mediaListPlayer.play()
+        self.mediaListPlayer.play()

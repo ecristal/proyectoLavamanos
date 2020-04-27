@@ -61,7 +61,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.mediaPlayer.stop()
         dialogDeMensajes = widgetDeTexto()
         dialogDeMensajes.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowType_Mask)
-        dialogDeMensajes.showFullScreen()
+        dialogDeMensajes.showMinimized()
         dialogDeMensajes.setListaDeReproduccion(self.listaDeVideos)
         dialogDeMensajes.exec_()
         GPIO.cleanup()
