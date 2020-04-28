@@ -2,6 +2,7 @@ from PyQt5 import uic, QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidge
 import RPi.GPIO as GPIO
 from widgetDeTexto import widgetDeTexto
 import vlc
+import pickle
 
 mainWindow = uic.loadUiType("/home/pi/proyectoLavamanos/UI/mainwindow.ui")[0]
 
@@ -28,6 +29,12 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.bPausa.clicked.connect(self.bPausaPressed)
         self.bStop.clicked.connect(self.bStopPressed)
         self.bIniciarPrograma.clicked.connect(self.bIniciarProgramaPressed)
+        self.inicializarListaDeVideos()
+    
+    def inicializarListaDeVideos(self):
+        entradaSerial = open('listaDeReproduccion.pkl','rb')
+        self.listaDeVideos = pickle.load(entradaSerial)
+        print(self.listaDeVideos)
 
     def bAgregarVideoClicked(self):
         options = QtWidgets.QFileDialog.Options()
@@ -38,6 +45,9 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             item = QtGui.QStandardItem(files[i])
             self.modeloListaDeVideos.appendRow(item)
         self.videoListView.setModel(self.modeloListaDeVideos)
+        salidaSerial = open('listaDeReproduccion.pkl','wb')
+        pickle.dump(self.listaDeVideos, salidaSerial)
+        salidaSerial.close()
 
     def bPlayPressed(self):
         indiceVideo = self.videoListView.currentIndex()
