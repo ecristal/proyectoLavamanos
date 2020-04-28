@@ -161,6 +161,19 @@
      <string>Iniciar Programa</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cbAutoInicio">
+    <property name="geometry">
+     <rect>
+      <x>679</x>
+      <y>10</y>
+      <width>111</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Auto Inicio</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
