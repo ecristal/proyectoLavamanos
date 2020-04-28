@@ -1,5 +1,6 @@
 from PyQt5 import uic, QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
 import RPi.GPIO as GPIO
+from os import path
 from widgetDeTexto import widgetDeTexto
 import vlc
 import pickle
@@ -22,19 +23,30 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.videoFrame.setLayout(layout)
 
         self.listaDeVideos = []
-        self.modeloListaDeVideos = QtGui.QStandardItemModel(self.videoListView)
+        self.modeloListaDeVideos = QtGui.QStandardItemModel()
+        self.videoListView.setModel(self.modeloListaDeVideos)
+        self.videoListView.clicked.connect(self.videoListViewClicked)
 
         self.bAgregarVideo.clicked.connect(self.bAgregarVideoClicked)
+        self.bEliminarVideo.clicked.connect(self.bEliminarVideoClicked)
         self.bPlay.clicked.connect(self.bPlayPressed)
-        self.bPausa.clicked.connect(self.bPausaPressed)
         self.bStop.clicked.connect(self.bStopPressed)
         self.bIniciarPrograma.clicked.connect(self.bIniciarProgramaPressed)
+        
         self.inicializarListaDeVideos()
+        self.inicializarListViewDeVideos()
     
     def inicializarListaDeVideos(self):
-        entradaSerial = open('listaDeReproduccion.pkl','rb')
-        self.listaDeVideos = pickle.load(entradaSerial)
-        print(self.listaDeVideos)
+        if(path.exists("/home/pi/proyectoLavamanos/listaDeReproduccion.pkl")):
+            entradaSerial = open('/home/pi/proyectoLavamanos/listaDeReproduccion.pkl','rb')
+            self.listaDeVideos = pickle.load(entradaSerial)
+    
+    def inicializarListViewDeVideos(self):
+        self.bEliminarVideo.setEnabled(False)
+        for video in self.listaDeVideos:
+            item = QtGui.QStandardItem(video)
+            item.setEditable(False)
+            self.modeloListaDeVideos.appendRow(item)
 
     def bAgregarVideoClicked(self):
         options = QtWidgets.QFileDialog.Options()
@@ -43,28 +55,44 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         for i in range(0,len(files)):
             self.listaDeVideos.append(files[i])
             item = QtGui.QStandardItem(files[i])
+            item.setEditable(False)
             self.modeloListaDeVideos.appendRow(item)
-        self.videoListView.setModel(self.modeloListaDeVideos)
-        salidaSerial = open('listaDeReproduccion.pkl','wb')
+        salidaSerial = open('/home/pi/proyectoLavamanos/listaDeReproduccion.pkl','wb')
+        pickle.dump(self.listaDeVideos, salidaSerial)
+        salidaSerial.close()
+    
+    def bEliminarVideoClicked(self):
+        if(self.modeloListaDeVideos.rowCount() == 1):
+            self.bEliminarVideo.setEnabled(False)
+        indice = self.videoListView.currentIndex()
+        self.listaDeVideos.pop(indice.row())
+        self.modeloListaDeVideos.removeRow(indice.row())
+        salidaSerial = open('/home/pi/proyectoLavamanos/listaDeReproduccion.pkl','wb')
         pickle.dump(self.listaDeVideos, salidaSerial)
         salidaSerial.close()
 
+    def videoListViewClicked(self):
+        indice = self.videoListView.currentIndex()
+        if (indice.row()>-1):
+            self.bEliminarVideo.setEnabled(True)
+
     def bPlayPressed(self):
-        indiceVideo = self.videoListView.currentIndex()
-        direccionVideo = indiceVideo.data(QtCore.Qt.DisplayRole)
-        print(direccionVideo)
-        media = self.instanciaDeVideo.media_new(direccionVideo)
-        self.mediaPlayer.set_media(media)
-        media.parse()
-        self.mediaPlayer.set_xwindow(self.videoFrame.winId())
-        #self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(direccionVideo)))
-        self.mediaPlayer.play()
+        if(self.mediaPlayer.is_playing() and self.banderaMediaPlayerPlay):
+            self.mediaPlayer.pause()
+        else:
+            indiceVideo = self.videoListView.currentIndex()
+            direccionVideo = indiceVideo.data(QtCore.Qt.DisplayRole)
+            print(direccionVideo)
+            media = self.instanciaDeVideo.media_new(direccionVideo)
+            self.mediaPlayer.set_media(media)
+            media.parse()
+            self.mediaPlayer.set_xwindow(self.videoFrame.winId())
+            #self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(direccionVideo)))
+            self.mediaPlayer.play()
+            self.banderaMediaPlayerPlay = True
 
     def bStopPressed(self):
         self.mediaPlayer.stop()
-
-    def bPausaPressed(self):
-        self.mediaPlayer.pause()
 
     def bIniciarProgramaPressed(self):
         print('bIniciarProgramaPressed')
