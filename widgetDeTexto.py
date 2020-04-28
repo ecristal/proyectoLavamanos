@@ -9,8 +9,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         super().__init__(parent)
         self.setupUi(self)
 
+        self.ejecutarSinPublicidad = False
+
         self.widgetReproductorDePublicidad = QtWidgets.QWidget()
-        self.widgetReproductorDePublicidad.showFullScreen()
 
         #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
         #self.videoWidget = QtMultimediaWidgets.QVideoWidget()
@@ -21,9 +22,10 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto = QtWidgets.QLabel()
         self.texto.setFixedHeight(300)
         self.texto.setFixedWidth(2000)
-        self.texto.setText('HOLA MUNDO')
-        font = QtGui.QFont('Arial',200)
+        self.texto.setText("Que tenga un buen dia.")
+        font = QtGui.QFont("Arial",120)
         self.texto.setFont(font)
+        self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.videoFrame = QtWidgets.QFrame()
         self.instanciaDeVideo = vlc.Instance()
         #self.instanciaDeVideoPublicidad = vlc.Instance()
@@ -116,7 +118,8 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
             self.inicioDeSecuenciaDeLavado()
-            self.mediaListPlayer.pause()
+            #self.mediaListPlayer.pause()
+            self.pauseMediaListPlayer()
             self.setWindowState(QtCore.Qt.WindowFullScreen)
         if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaDispensarJabon == 0):
             GPIO.output(24,GPIO.LOW)
@@ -127,7 +130,8 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         if ((not GPIO.input(8)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
             self.inicioDeSecuenciaDeLavado()
-            self.mediaListPlayer.pause()
+            #self.mediaListPlayer.pause()
+            self.pauseMediaListPlayer()
             self.setWindowState(QtCore.Qt.WindowFullScreen)
 
     def timeoutTimerDispensandoJabon(self):
@@ -191,8 +195,10 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
     def timeoutTimerFinLavado(self):
         self.timerFinLavado.stop()
-        self.setWindowState(QtCore.Qt.WindowMinimized)
-        self.mediaListPlayer.pause()
+        if(not self.ejecutarSinPublicidad):
+            self.setWindowState(QtCore.Qt.WindowMinimized)
+        #self.mediaListPlayer.pause()
+        self.pauseMediaListPlayer()
 
     def setListaDeReproduccion(self,listaDeReproduccion):
         self.listaDeReproduccion = listaDeReproduccion
@@ -208,8 +214,28 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #self.playlist.setCurrentIndex(1)
         #self.mediaPlayer.setPlaylist(self.playlist)
         self.mediaListPlayer.set_media_list(self.playlist)
-        self.mediaListPlayer.play()
-    
+        #self.mediaListPlayer.play()
+        self.playMediaListPlayer()
+
+    def setEjecutarSinPublicidad(self, ejecutarSinPublicidad):
+        self.ejecutarSinPublicidad = ejecutarSinPublicidad
+        self.checkIniciarSinPublicidad()
+
+    def checkIniciarSinPublicidad(self):
+        if(self.ejecutarSinPublicidad):
+            self.showFullScreen()
+        else:
+            self.showMinimized()
+            self.widgetReproductorDePublicidad.showFullScreen()
+
+    def playMediaListPlayer(self):
+        if(not self.ejecutarSinPublicidad):
+            self.mediaListPlayer.play()
+
+    def pauseMediaListPlayer(self):
+        if(not self.ejecutarSinPublicidad):
+            self.mediaListPlayer.pause()
+
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
             #GPIO.cleanup()

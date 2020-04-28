@@ -28,6 +28,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.videoListView.clicked.connect(self.videoListViewClicked)
 
         self.cbAutoInicio.stateChanged.connect(self.cbAutoInicioStateChanged)
+        self.cbIniciarSinPublicidad.stateChanged.connect(self.cbIniciarSinPublicidadStateChanged)
 
         self.bAgregarVideo.clicked.connect(self.bAgregarVideoClicked)
         self.bEliminarVideo.clicked.connect(self.bEliminarVideoClicked)
@@ -37,6 +38,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
 
         self.inicializarListaDeVideos()
         self.inicializarListViewDeVideos()
+        self.checkIniciarSinPublicidadHabilitado()
         self.checkAutoInicioHabilitado()
 
     def inicializarListaDeVideos(self):
@@ -50,6 +52,12 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             item = QtGui.QStandardItem(video)
             item.setEditable(False)
             self.modeloListaDeVideos.appendRow(item)
+        if(self.modeloListaDeVideos.rowCount() == 0):
+            self.bIniciarPrograma.setEnabled(False)
+            self.cbIniciarSinPublicidad.setEnabled(False)
+        if(self.modeloListaDeVideos.rowCount() == 1):
+            self.bIniciarPrograma.setEnabled(True)
+            self.cbIniciarSinPublicidad.setEnabled(False)
 
     def bAgregarVideoClicked(self):
         options = QtWidgets.QFileDialog.Options()
@@ -60,6 +68,10 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             item = QtGui.QStandardItem(files[i])
             item.setEditable(False)
             self.modeloListaDeVideos.appendRow(item)
+        if(self.modeloListaDeVideos.rowCount() >= 2):
+            self.cbIniciarSinPublicidad.setEnabled(True)
+            self.bIniciarPrograma.setEnabled(True)
+            self.cbIniciarSinPublicidad.setChecked(False)
         salidaSerial = open('/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl','wb')
         pickle.dump(self.listaDeVideos, salidaSerial)
         salidaSerial.close()
@@ -67,6 +79,10 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
     def bEliminarVideoClicked(self):
         if(self.modeloListaDeVideos.rowCount() == 1):
             self.bEliminarVideo.setEnabled(False)
+            self.bIniciarPrograma.setEnabled(False)
+        if(self.modeloListaDeVideos.rowCount() == 2):
+            self.cbIniciarSinPublicidad.setEnabled(False)
+            self.cbIniciarSinPublicidad.setChecked(True)
         indice = self.videoListView.currentIndex()
         self.listaDeVideos.pop(indice.row())
         self.modeloListaDeVideos.removeRow(indice.row())
@@ -101,13 +117,24 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         if(path.exists("/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl")):
             entradaSerial = open('/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl','rb')
             self.cbAutoInicio.setChecked(pickle.load(entradaSerial))
-        if(self.cbAutoInicio.isChecked()):
+        if(self.cbAutoInicio.isChecked() and self.modeloListaDeVideos.rowCount() >= 1):
             print('autoinicio')
             self.bIniciarProgramaPressed()
 
     def cbAutoInicioStateChanged(self):
         salidaSerial = open('/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl','wb')
         pickle.dump(self.cbAutoInicio.isChecked(), salidaSerial)
+        salidaSerial.close()
+
+    def checkIniciarSinPublicidadHabilitado(self):
+        if(path.exists("/home/pi/proyectoLavamanos/datos/cbIniciarSinPublicidad.pkl")):
+            entradaSerial = open('/home/pi/proyectoLavamanos/datos/cbIniciarSinPublicidad.pkl','rb')
+            self.cbIniciarSinPublicidad.setChecked(pickle.load(entradaSerial))
+
+    def cbIniciarSinPublicidadStateChanged(self):
+        print(self.cbIniciarSinPublicidad.isChecked())
+        salidaSerial = open('/home/pi/proyectoLavamanos/datos/cbIniciarSinPublicidad.pkl','wb')
+        pickle.dump(self.cbIniciarSinPublicidad.isChecked(), salidaSerial)
         salidaSerial.close()
 
     def bIniciarProgramaPressed(self):
@@ -117,10 +144,14 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         dialogDeMensajes.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowType_Mask)
         #dialogDeMensajes.showMinimized()
         #dialogDeMensajes.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        dialogDeMensajes.setEjecutarSinPublicidad(self.cbIniciarSinPublicidad.isChecked())
         dialogDeMensajes.setListaDeReproduccion(self.listaDeVideos)
-        dialogDeMensajes.showMinimized()
+        #dialogDeMensajes.showMinimized()
         dialogDeMensajes.exec_()
         GPIO.cleanup()
+
+
+
     #def keyPressEvent(self, event):
     #    if (event.key() == QtCore.Qt.Key_Escape) and (self.videoWidget.isFullScreen() == False):
     #        print('HOLA')
