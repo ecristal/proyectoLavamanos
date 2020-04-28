@@ -40,8 +40,8 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.checkAutoInicioHabilitado()
 
     def inicializarListaDeVideos(self):
-        if(path.exists("/home/pi/proyectoLavamanos/listaDeReproduccion.pkl")):
-            entradaSerial = open('/home/pi/proyectoLavamanos/listaDeReproduccion.pkl','rb')
+        if(path.exists("/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl")):
+            entradaSerial = open('/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl','rb')
             self.listaDeVideos = pickle.load(entradaSerial)
 
     def inicializarListViewDeVideos(self):
@@ -60,7 +60,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             item = QtGui.QStandardItem(files[i])
             item.setEditable(False)
             self.modeloListaDeVideos.appendRow(item)
-        salidaSerial = open('/home/pi/proyectoLavamanos/listaDeReproduccion.pkl','wb')
+        salidaSerial = open('/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl','wb')
         pickle.dump(self.listaDeVideos, salidaSerial)
         salidaSerial.close()
 
@@ -70,7 +70,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         indice = self.videoListView.currentIndex()
         self.listaDeVideos.pop(indice.row())
         self.modeloListaDeVideos.removeRow(indice.row())
-        salidaSerial = open('/home/pi/proyectoLavamanos/listaDeReproduccion.pkl','wb')
+        salidaSerial = open('/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl','wb')
         pickle.dump(self.listaDeVideos, salidaSerial)
         salidaSerial.close()
 
@@ -98,15 +98,15 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.mediaPlayer.stop()
 
     def checkAutoInicioHabilitado(self):
-        if(path.exists("/home/pi/proyectoLavamanos/cbAutoInicio.pkl")):
-            entradaSerial = open('/home/pi/proyectoLavamanos/cbAutoInicio.pkl','rb')
+        if(path.exists("/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl")):
+            entradaSerial = open('/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl','rb')
             self.cbAutoInicio.setChecked(pickle.load(entradaSerial))
         if(self.cbAutoInicio.isChecked()):
             print('autoinicio')
             self.bIniciarProgramaPressed()
 
     def cbAutoInicioStateChanged(self):
-        salidaSerial = open('/home/pi/proyectoLavamanos/cbAutoInicio.pkl','wb')
+        salidaSerial = open('/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl','wb')
         pickle.dump(self.cbAutoInicio.isChecked(), salidaSerial)
         salidaSerial.close()
 
