@@ -123,17 +123,21 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         if(not self.banderaMediaPlayerPlay):
             self.mediaPlayer.play()
             self.banderaMediaPlayerPlay = True
-            self.bPlay.setIcon(self.playIcon)
+            self.banderaMediaPlayerPause = True
+            self.bPlay.setIcon(self.pausaIcon)
         else:
             self.mediaPlayer.pause()
             if(not self.banderaMediaPlayerPause):
-                self.bPlay.setIcon(self.pauseIcon)
+                self.bPlay.setIcon(self.pausaIcon)
             else:
                 self.bPlay.setIcon(self.playIcon)
             self.banderaMediaPlayerPause = not self.banderaMediaPlayerPause
 
     def bStopPressed(self):
         self.mediaPlayer.stop()
+        self.bPlay.setIcon(self.playIcon)
+        self.banderaMediaPlayerPlay = False
+        self.banderaMediaPlayerPause = False
 
     def checkAutoInicioHabilitado(self):
         if(path.exists("/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl")):
