@@ -89,6 +89,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.timerDispensandoJabon = QtCore.QTimer()
         self.timerDispensandoJabon.timeout.connect(self.timeoutTimerDispensandoJabon)
 
+        self.timerPausaInicialDeVideo = QtCore.QTimer()
+        self.timerPausaInicialDeVideo.timeout.connect(self.timeoutTimerPausaInicialDeVideo)
+
         self.setWindowState(QtCore.Qt.WindowMinimized)
 
         GPIO.setmode(GPIO.BCM)
@@ -147,20 +150,20 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.banderaEjecucionSecuenciaDispensarJabon = 0
 
     def inicioDeSecuenciaDeLavado(self):
-        self.mediaPlayerLavamanos.play()
         self.texto.setText("La OMS recomienda un lavado especial de manos.\nSu duracion es de 35 segundos")
         font = QtGui.QFont("Arial",50)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         GPIO.output(25,GPIO.LOW)
         self.timerInicioDeSecuenciaLavado.start(self.tiempoCanillaAbiertaInicial)
-        self.mediaPlayerLavamanos.pause()
+        self.media = self.instanciaDeVideo.media_new(self.listaDeReproduccion[0])
+        self.mediaPlayerLavamanos.set_media(self.media)
+        self.mediaPlayerLavamanos.play()
+        self.timerPausaInicialDeVideo.start(500)
 
     def timeoutTimerInicioDeSecuencia(self):
         GPIO.output(25,GPIO.HIGH)
         self.timerInicioDeSecuenciaLavado.stop()
-        self.media = self.instanciaDeVideo.media_new(self.listaDeReproduccion[0])
-        self.mediaPlayerLavamanos.set_media(self.media)
         self.mediaPlayerLavamanos.pause()
         self.texto.setText("0")
         font = QtGui.QFont("Arial",200)
@@ -208,6 +211,11 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
             self.setWindowState(QtCore.Qt.WindowMinimized)
         #self.mediaListPlayer.pause()
         self.pauseMediaListPlayer()
+
+    def timeoutTimerPausaInicialDeVideo(self):
+        self.timerPausaInicialDeVideo.stop()
+        self.mediaPlayerLavamanos.pause()
+        print('pausa emitida timer')
 
     def setListaDeReproduccion(self,listaDeReproduccion):
         self.listaDeReproduccion = listaDeReproduccion
