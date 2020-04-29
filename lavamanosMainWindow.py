@@ -38,6 +38,9 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.bStop.clicked.connect(self.bStopPressed)
         self.bIniciarPrograma.clicked.connect(self.bIniciarProgramaPressed)
 
+        self.banderaMediaPlayerPlay = False
+        self.banderaMediaPlayerPause = False
+
         self.inicializarListaDeVideos()
         self.inicializarListViewDeVideos()
         self.checkIniciarSinPublicidadHabilitado()
@@ -49,9 +52,11 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.playIcon = QtGui.QIcon(QtGui.QPixmap(self.directorioDeAplicacion + '/recursos/play_icono.png'))
         self.pausaIcon = QtGui.QIcon(QtGui.QPixmap(self.directorioDeAplicacion + '/recursos/pausa_icono.png'))
         self.stopIcon = QtGui.QIcon(QtGui.QPixmap(self.directorioDeAplicacion + '/recursos/stop_icono.png'))
-        
+
         self.bPlay.setIcon(self.playIcon)
         self.bStop.setIcon(self.stopIcon)
+
+        self.mediaPlayer.set_xwindow(self.videoFrame.winId())
 
     def inicializarListaDeVideos(self):
         if(path.exists("/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl")):
@@ -105,22 +110,27 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
     def videoListViewClicked(self):
         indice = self.videoListView.currentIndex()
         if (indice.row()>-1):
+            self.mediaPlayer.stop()
             self.bEliminarVideo.setEnabled(True)
-
-    def bPlayPressed(self):
-        if(self.mediaPlayer.is_playing() and self.banderaMediaPlayerPlay):
-            self.mediaPlayer.pause()
-        else:
-            indiceVideo = self.videoListView.currentIndex()
-            direccionVideo = indiceVideo.data(QtCore.Qt.DisplayRole)
+            direccionVideo = indice.data(QtCore.Qt.DisplayRole)
             print(direccionVideo)
             media = self.instanciaDeVideo.media_new(direccionVideo)
             self.mediaPlayer.set_media(media)
-            media.parse()
-            self.mediaPlayer.set_xwindow(self.videoFrame.winId())
-            #self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(direccionVideo)))
+            self.bPlay.setIcon(self.playIcon)
+            self.banderaMediaPlayerPlay = False
+
+    def bPlayPressed(self):
+        if(not self.banderaMediaPlayerPlay):
             self.mediaPlayer.play()
             self.banderaMediaPlayerPlay = True
+            self.bPlay.setIcon(self.playIcon)
+        else:
+            self.mediaPlayer.pause()
+            if(not self.banderaMediaPlayerPause):
+                self.bPlay.setIcon(self.pauseIcon)
+            else:
+                self.bPlay.setIcon(self.playIcon)
+            self.banderaMediaPlayerPause = not self.banderaMediaPlayerPause
 
     def bStopPressed(self):
         self.mediaPlayer.stop()
