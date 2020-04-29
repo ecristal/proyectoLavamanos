@@ -215,12 +215,14 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
     def timeoutTimerPausaInicialDeVideo(self):
         self.timerPausaInicialDeVideo.stop()
         self.mediaPlayerLavamanos.pause()
-        print('pausa emitida timer')
+
 
     def setListaDeReproduccion(self,listaDeReproduccion):
         self.listaDeReproduccion = listaDeReproduccion
         self.media = self.instanciaDeVideo.media_new(self.listaDeReproduccion[0])
         self.mediaPlayerLavamanos.set_media(self.media)
+        self.mediaPlayerLavamanos.play()
+        self.timerPausaInicialDeVideo.start(500)
         #self.mediaPlayerLavamanos.play()
         #self.mediaPlayerLavamanos.pause()
         #self.inicioDeSecuenciaDeLavado()
