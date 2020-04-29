@@ -56,6 +56,9 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.bPlay.setIcon(self.playIcon)
         self.bStop.setIcon(self.stopIcon)
 
+        self.bPlay.setEnabled(False)
+        self.bStop.setEnabled(False)
+
         self.mediaPlayer.set_xwindow(self.videoFrame.winId())
 
     def inicializarListaDeVideos(self):
@@ -94,9 +97,14 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         salidaSerial.close()
 
     def bEliminarVideoClicked(self):
+        self.mediaPlayer.stop()
+        self.bPlay.setIcon(self.playIcon)
+        self.banderaMediaPlayerPlay = False
         if(self.modeloListaDeVideos.rowCount() == 1):
             self.bEliminarVideo.setEnabled(False)
             self.bIniciarPrograma.setEnabled(False)
+            self.bPlay.setEnabled(False)
+            self.bStop.setEnabled(False)
         if(self.modeloListaDeVideos.rowCount() == 2):
             self.cbIniciarSinPublicidad.setEnabled(False)
             self.cbIniciarSinPublicidad.setChecked(True)
@@ -112,15 +120,18 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         if (indice.row()>-1):
             self.mediaPlayer.stop()
             self.bEliminarVideo.setEnabled(True)
-            direccionVideo = indice.data(QtCore.Qt.DisplayRole)
-            print(direccionVideo)
-            media = self.instanciaDeVideo.media_new(direccionVideo)
-            self.mediaPlayer.set_media(media)
+            self.bPlay.setEnabled(True)
+            self.bStop.setEnabled(True)
             self.bPlay.setIcon(self.playIcon)
             self.banderaMediaPlayerPlay = False
 
     def bPlayPressed(self):
+        indice = self.videoListView.currentIndex()
         if(not self.banderaMediaPlayerPlay):
+            direccionVideo = indice.data(QtCore.Qt.DisplayRole)
+            print(direccionVideo)
+            media = self.instanciaDeVideo.media_new(direccionVideo)
+            self.mediaPlayer.set_media(media)
             self.mediaPlayer.play()
             self.banderaMediaPlayerPlay = True
             self.banderaMediaPlayerPause = True
