@@ -99,6 +99,11 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         GPIO.setup(24, GPIO.OUT) # Jabon salida
         GPIO.setup(25, GPIO.OUT) # salida de agua
 
+        GPIO.setup(7, GPIO.OUT) #test de servo
+
+        self.servo = GPIO.PWM(7, 470)
+        self.servo.start(0)
+
         GPIO.output(24,GPIO.HIGH)
         GPIO.output(25,GPIO.HIGH)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
