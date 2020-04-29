@@ -41,11 +41,6 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.banderaMediaPlayerPlay = False
         self.banderaMediaPlayerPause = False
 
-        self.inicializarListaDeVideos()
-        self.inicializarListViewDeVideos()
-        self.checkIniciarSinPublicidadHabilitado()
-        self.checkAutoInicioHabilitado()
-
         self.bPlay.setText('')
         self.bStop.setText('')
 
@@ -60,6 +55,12 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.bStop.setEnabled(False)
 
         self.mediaPlayer.set_xwindow(self.videoFrame.winId())
+
+        self.configurarBarraDeMenu()
+        self.inicializarListaDeVideos()
+        self.inicializarListViewDeVideos()
+        self.checkIniciarSinPublicidadHabilitado()
+        self.checkAutoInicioHabilitado()
 
     def inicializarListaDeVideos(self):
         if(path.exists("/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl")):
@@ -187,7 +188,10 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         dialogDeMensajes.exec_()
         GPIO.cleanup()
 
-
+    def configurarBarraDeMenu(self):
+        menuHerramientas = self.menuBar.addMenu('&Herramientas')
+        accionAbrirOpciones = QtWidgets.QAction('Configuracion',self)
+        menuHerramientas.addAction(accionAbrirOpciones)
 
     #def keyPressEvent(self, event):
     #    if (event.key() == QtCore.Qt.Key_Escape) and (self.videoWidget.isFullScreen() == False):
