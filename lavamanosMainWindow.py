@@ -40,6 +40,9 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.bStop.clicked.connect(self.bStopPressed)
         self.bIniciarPrograma.clicked.connect(self.bIniciarProgramaPressed)
 
+        self.timerInicioAutomatico = QtCore.QTimer()
+        self.timerInicioAutomatico.timeout.connect(self.timeoutTimerInicioAutomatico)
+
         self.banderaMediaPlayerPlay = False
         self.banderaMediaPlayerPause = False
 
@@ -167,7 +170,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             self.cbAutoInicio.setChecked(pickle.load(entradaSerial))
         if(self.cbAutoInicio.isChecked() and self.modeloListaDeVideos.rowCount() >= 1):
             print('autoinicio')
-            self.bIniciarProgramaPressed()
+            self.timerInicioAutomatico.start(5000)
 
     def cbAutoInicioStateChanged(self):
         salidaSerial = open('/home/pi/proyectoLavamanos/datos/cbAutoInicio.pkl','wb')
@@ -237,6 +240,10 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             print(self.tiempoJabon)
         else:
             print('continue')
+
+    def timeoutTimerInicioAutomatico(self):
+        self.timerInicioAutomatico.stop()
+        self.bIniciarProgramaPressed()
 
     #def keyPressEvent(self, event):
     #    if (event.key() == QtCore.Qt.Key_Escape) and (self.videoWidget.isFullScreen() == False):
