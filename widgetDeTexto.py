@@ -66,7 +66,6 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.timerUnSegundoLavado.timeout.connect(self.timeoutTimerUnSegundoLavado)
         self.contadorUnSegundoLavado = 0
 
-
         self.timerInicioDeEnjuague = QtCore.QTimer() # esto crea el timer llamano timeriniciodenjuague
         self.timerInicioDeEnjuague.timeout.connect(self.timeoutTimerInicioDeEnjuague) ## conecta la senha .timeout a timerenjuague
 
@@ -101,6 +100,14 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
         GPIO.output(24,GPIO.HIGH)
         GPIO.output(25,GPIO.HIGH)
+
+        self.tiempoCanillaAbiertaInicial = 0
+        self.tiempoLavamanos = 0
+        self.tiempoCanillaAbiertaEnjuague = 0
+        self.tiempoSecadoDeManos = 0
+        self.tiempoMensajeFinal = 0
+        self.tiempoJabon = 0
+
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         #def gpio23_Interrupted(canal):
@@ -124,7 +131,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaDispensarJabon == 0):
             GPIO.output(24,GPIO.LOW)
             self.banderaEjecucionSecuenciaDispensarJabon = 1
-            self.timerDispensandoJabon.start(2000)
+            self.timerDispensandoJabon.start(self.tiempoJabon)
 
     def timeoutTimerCheckSensorAgua(self):
         if ((not GPIO.input(8)) and self.banderaEjecucionSecuenciaLavado == 0):
@@ -145,7 +152,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         GPIO.output(25,GPIO.LOW)
-        self.timerInicioDeSecuenciaLavado.start(6000)
+        self.timerInicioDeSecuenciaLavado.start(self.tiempoCanillaAbiertaInicial)
 
     def timeoutTimerInicioDeSecuencia(self):
         GPIO.output(25,GPIO.HIGH)
@@ -165,9 +172,9 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         font = QtGui.QFont("Arial",200)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
-        if (self.contadorUnSegundoLavado > 35):
+        if (self.contadorUnSegundoLavado > int(self.tiempoLavamanos/1000)):
             self.timerUnSegundoLavado.stop()
-            self.timerInicioDeEnjuague.start(10000)
+            self.timerInicioDeEnjuague.start(self.tiempoCanillaAbiertaEnjuague)
             self.texto.setText("Puede enjuagarse las manos")
             font = QtGui.QFont("Arial",100)
             self.texto.setFont(font)
@@ -182,7 +189,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         font = QtGui.QFont("Arial",50)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
-        self.timerMensajeFinal.start(5000)
+        self.timerMensajeFinal.start(self.tiempoSecadoDeManos)
 
     def timeoutTimerMensajeFinal(self):
         self.timerMensajeFinal.stop()
@@ -191,7 +198,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.banderaEjecucionSecuenciaLavado = 0
-        self.timerFinLavado.start(3000)
+        self.timerFinLavado.start(self.tiempoMensajeFinal)
 
     def timeoutTimerFinLavado(self):
         self.timerFinLavado.stop()
@@ -235,6 +242,14 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
     def pauseMediaListPlayer(self):
         if(not self.ejecutarSinPublicidad):
             self.mediaListPlayer.pause()
+
+    def setTiemposDeCiclo(self, tiempoCanillaAbiertaInicial, tiempoLavamanos, tiempoCanillaAbiertaEnjuague, tiempoSecadoDeManos, tiempoMensajeFinal, tiempoJabon):
+        self.tiempoCanillaAbiertaInicial = tiempoCanillaAbiertaInicial
+        self.tiempoLavamanos = tiempoLavamanos
+        self.tiempoCanillaAbiertaEnjuague = tiempoCanillaAbiertaEnjuague
+        self.tiempoSecadoDeManos = tiempoSecadoDeManos
+        self.tiempoMensajeFinal = tiempoMensajeFinal
+        self.tiempoJabon = tiempoJabon
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:

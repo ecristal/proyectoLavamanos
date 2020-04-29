@@ -2,6 +2,7 @@ from PyQt5 import uic, QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidge
 import RPi.GPIO as GPIO
 from os import path
 from widgetDeTexto import widgetDeTexto
+from dialogOpciones import dialogOpciones
 import vlc
 import pickle
 
@@ -12,6 +13,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
+        self.setWindowTitle('Programa de Lavamanos Automatico')
         self.directorioDeAplicacion = '/home/pi/proyectoLavamanos'
 
         #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
@@ -54,9 +56,17 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.bPlay.setEnabled(False)
         self.bStop.setEnabled(False)
 
+        self.tiempoCanillaAbiertaInicial = 0
+        self.tiempoLavamanos = 0
+        self.tiempoCanillaAbiertaEnjuague = 0
+        self.tiempoSecadoDeManos = 0
+        self.tiempoMensajeFinal = 0
+        self.tiempoJabon = 0
+
         self.mediaPlayer.set_xwindow(self.videoFrame.winId())
 
         self.configurarBarraDeMenu()
+        self.configurarTiempoInicialesDefault()
         self.inicializarListaDeVideos()
         self.inicializarListViewDeVideos()
         self.checkIniciarSinPublicidadHabilitado()
@@ -179,6 +189,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         print('bIniciarProgramaPressed')
         self.mediaPlayer.stop()
         dialogDeMensajes = widgetDeTexto(self)
+        dialogDeMensajes.setTiemposDeCiclo(self.tiempoCanillaAbiertaInicial, self.tiempoLavamanos, self.tiempoCanillaAbiertaEnjuague, self.tiempoSecadoDeManos, self.tiempoMensajeFinal, self.tiempoJabon)
         dialogDeMensajes.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowType_Mask)
         #dialogDeMensajes.showMinimized()
         #dialogDeMensajes.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -189,9 +200,43 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         GPIO.cleanup()
 
     def configurarBarraDeMenu(self):
-        menuHerramientas = self.menuBar.addMenu('&Herramientas')
+        menuHerramientas = self.menuBar().addMenu('&Herramientas')
         accionAbrirOpciones = QtWidgets.QAction('Configuracion',self)
+        accionAbrirOpciones.triggered.connect(self.menuAbrirOpcionesTriggered)
         menuHerramientas.addAction(accionAbrirOpciones)
+
+    def configurarTiempoInicialesDefault(self):
+        self.tiempoCanillaAbiertaInicial = 6000
+        self.tiempoLavamanos = 35000
+        self.tiempoCanillaAbiertaEnjuague = 10000
+        self.tiempoSecadoDeManos = 5000
+        self.tiempoMensajeFinal = 3000
+        self.tiempoJabon = 2000
+
+    def menuAbrirOpcionesTriggered(self):
+        dialogDeOpciones = dialogOpciones(self)
+        dialogDeOpciones.setTiempoCanillaAbiertaInicial(self.tiempoCanillaAbiertaInicial)
+        dialogDeOpciones.setTiempoLavamanos(self.tiempoLavamanos)
+        dialogDeOpciones.setTiempoCanillaAbiertaEnjuague(self.tiempoCanillaAbiertaEnjuague)
+        dialogDeOpciones.setTiempoSecadoDeManos(self.tiempoSecadoDeManos)
+        dialogDeOpciones.setTiempoMensajeFinal(self.tiempoMensajeFinal)
+        dialogDeOpciones.setTiempoJabon(self.tiempoJabon)
+        caso = dialogDeOpciones.exec_()
+        if (caso):
+            self.tiempoCanillaAbiertaInicial = dialogDeOpciones.getTiempoCanillaAbiertaInicial()
+            print(self.tiempoCanillaAbiertaInicial)
+            self.tiempoLavamanos = dialogDeOpciones.getTiempoLavamanos()
+            print(self.tiempoLavamanos)
+            self.tiempoCanillaAbiertaEnjuague = dialogDeOpciones.getTiempoCanillaAbiertaEnjuague()
+            print(self.tiempoCanillaAbiertaEnjuague)
+            self.tiempoSecadoDeManos = dialogDeOpciones.getTiempoSecadoDeManos()
+            print(self.tiempoSecadoDeManos)
+            self.tiempoMensajeFinal = dialogDeOpciones.getTiempoMensajeFinal()
+            print(self.tiempoMensajeFinal)
+            self.tiempoJabon = dialogDeOpciones.getTiempoJabon()
+            print(self.tiempoJabon)
+        else:
+            print('continue')
 
     #def keyPressEvent(self, event):
     #    if (event.key() == QtCore.Qt.Key_Escape) and (self.videoWidget.isFullScreen() == False):
