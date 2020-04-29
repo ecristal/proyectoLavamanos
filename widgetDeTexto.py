@@ -12,8 +12,12 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.ejecutarSinPublicidad = False
 
         self.widgetReproductorDePublicidad = QtWidgets.QWidget()
-        self.widgetReproductorDePublicidad.setCursor(QtCore.Qt.BlankCursor)
-        self.setCursor(QtCore.Qt.BlankCursor)
+        resolucion = QtWidgets.QDesktopWidget.screenGeometry(QtWidgets.QApplication.desktop())
+        QtGui.QCursor.setPos(resolucion.width(),resolucion.height())
+        #print(resolucion.width())
+        #print(resolucion.height())
+        #self.widgetReproductorDePublicidad.setCursor(QtCore.Qt.BlankCursor)
+        #self.setCursor(QtCore.Qt.BlankCursor)
         #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
         #self.videoWidget = QtMultimediaWidgets.QVideoWidget()
         #self.mediaPlayer.setVideoOutput(self.videoWidget)

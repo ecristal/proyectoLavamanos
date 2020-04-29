@@ -199,7 +199,9 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         dialogDeMensajes.setEjecutarSinPublicidad(self.cbIniciarSinPublicidad.isChecked())
         dialogDeMensajes.setListaDeReproduccion(self.listaDeVideos)
         #dialogDeMensajes.showMinimized()
+        QtGui.QGuiApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
         dialogDeMensajes.exec_()
+        QtGui.QGuiApplication.restoreOverrideCursor()
         GPIO.cleanup()
 
     def configurarBarraDeMenu(self):
