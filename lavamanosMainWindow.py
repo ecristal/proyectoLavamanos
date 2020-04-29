@@ -12,6 +12,8 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
+        self.directorioDeAplicacion = qtCore.QCoreApplication.applicationDirPath()
+
         #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
         self.videoWidget = QtWidgets.QFrame()
         #self.mediaPlayer.setVideoOutput(self.videoWidget)
@@ -40,6 +42,16 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.inicializarListViewDeVideos()
         self.checkIniciarSinPublicidadHabilitado()
         self.checkAutoInicioHabilitado()
+
+        self.bPlay.setText('')
+        self.bStop.setText('')
+
+        self.playIcon = QtGui.QIcon(QtGui.QPixMap(directorioDeAplicacion + '/recursos/play_icono.png'))
+        self.pausaIcon = QtGui.QIcon(QtGui.QQPixMap(directorioDeAplicacion + '/recursos/pausa_icono.png'))
+        self.stopIcon = QtGui.QIcon(QtGui.QQPixMap(directorioDeAplicacion + '/recursos/stop_icono.png'))
+
+        self.bPlay.setIcon(self.playIcon)
+        self.bStop.setIcon(self.stopIcon)
 
     def inicializarListaDeVideos(self):
         if(path.exists("/home/pi/proyectoLavamanos/datos/listaDeReproduccion.pkl")):
