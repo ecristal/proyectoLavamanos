@@ -98,11 +98,14 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.timerPausaInicialDeVideo.timeout.connect(self.timeoutTimerPausaInicialDeVideo)
 
         self.setWindowState(QtCore.Qt.WindowMinimized)
+        
+        self.in_pin_jabon = 8
+        self.in_pin_agua = 23
 
         GPIO.setmode(GPIO.BCM)
         #GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Canilla
-        GPIO.setup(23, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Jabon entrada
-        GPIO.setup(8, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Agua entrada
+        GPIO.setup(self.in_pin_jabon, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Jabon entrada
+        GPIO.setup(self.in_pin_agua, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Agua entrada
         GPIO.setup(24, GPIO.OUT) # Jabon salida
         GPIO.setup(25, GPIO.OUT) # salida de agua
 
@@ -130,19 +133,19 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #GPIO.add_event_detect(23, GPIO.FALLING, callback=gpio23_Interrupted, bouncetime=300)
         #GPIO.add_event_detect(24, GPIO.FALLING, callback=gpio24_Interrupted, bouncetime=300)
     def timeoutTimerCheckSensorJabon(self):
-        if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaLavado == 0):
-            self.banderaEjecucionSecuenciaLavado = 1
-            self.inicioDeSecuenciaDeLavado()
+        #if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaLavado == 0):
+            #self.banderaEjecucionSecuenciaLavado = 1
+            #self.inicioDeSecuenciaDeLavado()
             #self.mediaListPlayer.pause()
-            self.pauseMediaListPlayer()
-            self.setWindowState(QtCore.Qt.WindowFullScreen)
-        if ((not GPIO.input(23)) and self.banderaEjecucionSecuenciaDispensarJabon == 0):
+            #self.pauseMediaListPlayer()
+            #self.setWindowState(QtCore.Qt.WindowFullScreen)
+        if ((not GPIO.input(self.in_pin_jabon)) and self.banderaEjecucionSecuenciaDispensarJabon == 0):
             GPIO.output(24,GPIO.LOW)
             self.banderaEjecucionSecuenciaDispensarJabon = 1
             self.timerDispensandoJabon.start(self.tiempoJabon)
 
     def timeoutTimerCheckSensorAgua(self):
-        if ((not GPIO.input(8)) and self.banderaEjecucionSecuenciaLavado == 0):
+        if ((not GPIO.input(self.in_pin_agua)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
             self.inicioDeSecuenciaDeLavado()
             #self.mediaListPlayer.pause()
@@ -207,11 +210,11 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         font = QtGui.QFont("Arial",120)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
-        self.banderaEjecucionSecuenciaLavado = 0
         self.timerFinLavado.start(self.tiempoMensajeFinal)
 
     def timeoutTimerFinLavado(self):
         self.timerFinLavado.stop()
+        self.banderaEjecucionSecuenciaLavado = 0
         if(not self.ejecutarSinPublicidad):
             self.setWindowState(QtCore.Qt.WindowMinimized)
         #self.mediaListPlayer.pause()
