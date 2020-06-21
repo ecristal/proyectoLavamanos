@@ -25,10 +25,10 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         #self.playlist = QtMultimedia.QMediaPlaylist()
 
         self.texto = QtWidgets.QLabel()
-        self.texto.setFixedHeight(300)
-        self.texto.setFixedWidth(2000)
+        self.texto.setFixedHeight(int(0.3*resolucion.height()))
+        self.texto.setFixedWidth(int(0.9*resolucion.width()))
         self.texto.setText("Que tenga un buen dia.")
-        font = QtGui.QFont("Arial",120)
+        font = QtGui.QFont("Arial",80)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.videoFrame = QtWidgets.QFrame()
@@ -159,7 +159,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
 
     def inicioDeSecuenciaDeLavado(self):
         self.texto.setText("La OMS recomienda un lavado especial de manos.\nSu duracion es de 35 segundos")
-        font = QtGui.QFont("Arial",50)
+        font = QtGui.QFont("Arial",40)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         GPIO.output(25,GPIO.LOW)
@@ -189,7 +189,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
             self.timerUnSegundoLavado.stop()
             self.timerInicioDeEnjuague.start(self.tiempoCanillaAbiertaEnjuague)
             self.texto.setText("Puede enjuagarse las manos")
-            font = QtGui.QFont("Arial",100)
+            font = QtGui.QFont("Arial",60)
             self.texto.setFont(font)
             self.texto.setAlignment(QtCore.Qt.AlignCenter)
             self.contadorUnSegundoLavado = 0
@@ -199,7 +199,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.timerInicioDeEnjuague.stop()
         GPIO.output(25,GPIO.HIGH)
         self.texto.setText("No olvide secarse las manos.\nGracias por colaborar")
-        font = QtGui.QFont("Arial",50)
+        font = QtGui.QFont("Arial",45)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.timerMensajeFinal.start(self.tiempoSecadoDeManos)
@@ -207,7 +207,7 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
     def timeoutTimerMensajeFinal(self):
         self.timerMensajeFinal.stop()
         self.texto.setText("Que tenga un buen dia.")
-        font = QtGui.QFont("Arial",120)
+        font = QtGui.QFont("Arial",85)
         self.texto.setFont(font)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
         self.timerFinLavado.start(self.tiempoMensajeFinal)

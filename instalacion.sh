@@ -1,10 +1,10 @@
 sudo apt-get update 
 sudo apt-get install qt5-default pyqt5-dev pyqt5-dev-tools -y
 sudo apt-get install python3-pyqt5.qtmultimedia -y
-curl -s 'https://raw.githubusercontent.com/zerotier/ZeroTierOne/master/doc/contact%40zerotier.com.gpg' | gpg --import && \
-if z=$(curl -s 'https://install.zerotier.com/' | gpg); then echo "$z" | sudo bash; fi
-sudo systemctl enable zerotier-one
-sudo zerotier-cli join a84ac5c10aacc8bc
+#curl -s 'https://raw.githubusercontent.com/zerotier/ZeroTierOne/master/doc/contact%40zerotier.com.gpg' | gpg --import && \
+#if z=$(curl -s 'https://install.zerotier.com/' | gpg); then echo "$z" | sudo bash; fi
+#sudo systemctl enable zerotier-one
+#sudo zerotier-cli join a84ac5c10aacc8bc
 sudo apt-get install vino -y
 sudo gsettings set org.gnome.Vino require-encryption false
 sudo gsettings set org.gnome.Vino prompt-enabled false
