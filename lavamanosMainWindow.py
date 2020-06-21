@@ -211,12 +211,22 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         menuHerramientas.addAction(accionAbrirOpciones)
 
     def configurarTiempoInicialesDefault(self):
-        self.tiempoCanillaAbiertaInicial = 6000
-        self.tiempoLavamanos = 35000
-        self.tiempoCanillaAbiertaEnjuague = 10000
-        self.tiempoSecadoDeManos = 5000
-        self.tiempoMensajeFinal = 3000
-        self.tiempoJabon = 2000
+        if(path.exists("/home/pi/proyectoLavamanos/datos/tiemposDeLavado.pkl")):
+            entradaSerial = open('/home/pi/proyectoLavamanos/datos/tiemposDeLavado.pkl','rb')
+            vectorTiempos = pickle.load(entradaSerial)
+            self.tiempoCanillaAbiertaInicial = vectorTiempos[0] 
+            self.tiempoLavamanos = vectorTiempos[1] 
+            self.tiempoCanillaAbiertaEnjuague = vectorTiempos[2]
+            self.tiempoSecadoDeManos = vectorTiempos[3]
+            self.tiempoMensajeFinal = vectorTiempos[4]
+            self.tiempoJabon = vectorTiempos[5]
+        else:
+            self.tiempoCanillaAbiertaInicial = 6000
+            self.tiempoLavamanos = 35000
+            self.tiempoCanillaAbiertaEnjuague = 10000
+            self.tiempoSecadoDeManos = 5000
+            self.tiempoMensajeFinal = 3000
+            self.tiempoJabon = 1500
 
     def menuAbrirOpcionesTriggered(self):
         dialogDeOpciones = dialogOpciones(self)
@@ -240,6 +250,9 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             print(self.tiempoMensajeFinal)
             self.tiempoJabon = dialogDeOpciones.getTiempoJabon()
             print(self.tiempoJabon)
+            salidaSerial = open('/home/pi/proyectoLavamanos/datos/tiemposDeLavado.pkl','wb')
+            pickle.dump([self.tiempoCanillaAbiertaInicial, self.tiempoLavamanos, self.tiempoCanillaAbiertaEnjuague, self.tiempoSecadoDeManos, self.tiempoMensajeFinal, self.tiempoJabon],  salidaSerial)
+            salidaSerial.close()
         else:
             print('continue')
 
