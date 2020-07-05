@@ -16,9 +16,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.setWindowTitle('Programa de Lavamanos Automatico')
         self.directorioDeAplicacion = '/home/pi/proyectoLavamanos'
 
-        #self.mediaPlayer = QtMultimedia.QMediaPlayer(None,QtMultimedia.QMediaPlayer.VideoSurface)
         self.videoWidget = QtWidgets.QFrame()
-        #self.mediaPlayer.setVideoOutput(self.videoWidget)
         self.instanciaDeVideo = vlc.Instance()
         self.mediaPlayer = self.instanciaDeVideo.media_player_new()
 
@@ -259,12 +257,6 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
     def timeoutTimerInicioAutomatico(self):
         self.timerInicioAutomatico.stop()
         self.bIniciarProgramaPressed()
-
-    #def keyPressEvent(self, event):
-    #    if (event.key() == QtCore.Qt.Key_Escape) and (self.videoWidget.isFullScreen() == False):
-    #        print('HOLA')
-    #        self.videoWidget.setFullScreen(False)
-    #        event.accept()
 
 if __name__ == "__main__":
     import sys
