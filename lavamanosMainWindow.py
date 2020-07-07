@@ -31,6 +31,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
 
         self.cbAutoInicio.stateChanged.connect(self.cbAutoInicioStateChanged)
         self.cbIniciarSinPublicidad.stateChanged.connect(self.cbIniciarSinPublicidadStateChanged)
+        self.cbIniciarSinVideoLavado.stateChanged.connect(self.cbIniciarSinVideoLavadoStateChanged)
 
         self.bAgregarVideo.clicked.connect(self.bAgregarVideoClicked)
         self.bEliminarVideo.clicked.connect(self.bEliminarVideoClicked)
@@ -70,6 +71,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.configurarTiempoInicialesDefault()
         self.inicializarListaDeVideos()
         self.inicializarListViewDeVideos()
+        self.checkIniciarSinPublicidadHabilitado()
         self.checkIniciarSinPublicidadHabilitado()
         self.checkAutoInicioHabilitado()
 
@@ -180,11 +182,24 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             entradaSerial = open('/home/pi/proyectoLavamanos/datos/cbIniciarSinPublicidad.pkl','rb')
             self.cbIniciarSinPublicidad.setChecked(pickle.load(entradaSerial))
 
+    def checkIniciarSinVideoLavadoHabilitado(self):
+        if(path.exists("/home/pi/proyectoLavamanos/datos/cbIniciarSinVideoLavado.pkl.pkl")):
+            entradaSerial = open('/home/pi/proyectoLavamanos/datos/cbIniciarSinVideoLavado.pkl','rb')
+            self.cbIniciarSinVideoLavado.setChecked(pickle.load(entradaSerial))
+
     def cbIniciarSinPublicidadStateChanged(self):
         print(self.cbIniciarSinPublicidad.isChecked())
         salidaSerial = open('/home/pi/proyectoLavamanos/datos/cbIniciarSinPublicidad.pkl','wb')
         pickle.dump(self.cbIniciarSinPublicidad.isChecked(), salidaSerial)
         salidaSerial.close()
+        self.cbIniciarSinVideoLavado.setEnabled(not self.cbIniciarSinPublicidad.isChecked())
+
+    def cbIniciarSinVideoLavadoStateChanged(self):
+        print(self.cbIniciarSinVideoLavado.isChecked())
+        salidaSerial = open('/home/pi/proyectoLavamanos/datos/cbIniciarSinVideoLavado.pkl','wb')
+        pickle.dump(self.cbIniciarSinVideoLavado.isChecked(), salidaSerial)
+        salidaSerial.close()
+        self.cbIniciarSinPublicidad.setEnabled(not self.cbIniciarSinVideoLavado.isChecked())
 
     def bIniciarProgramaPressed(self):
         print('bIniciarProgramaPressed')
@@ -212,8 +227,8 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         if(path.exists("/home/pi/proyectoLavamanos/datos/tiemposDeLavado.pkl")):
             entradaSerial = open('/home/pi/proyectoLavamanos/datos/tiemposDeLavado.pkl','rb')
             vectorTiempos = pickle.load(entradaSerial)
-            self.tiempoCanillaAbiertaInicial = vectorTiempos[0] 
-            self.tiempoLavamanos = vectorTiempos[1] 
+            self.tiempoCanillaAbiertaInicial = vectorTiempos[0]
+            self.tiempoLavamanos = vectorTiempos[1]
             self.tiempoCanillaAbiertaEnjuague = vectorTiempos[2]
             self.tiempoSecadoDeManos = vectorTiempos[3]
             self.tiempoMensajeFinal = vectorTiempos[4]
