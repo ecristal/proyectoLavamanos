@@ -183,7 +183,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
             self.cbIniciarSinPublicidad.setChecked(pickle.load(entradaSerial))
 
     def checkIniciarSinVideoLavadoHabilitado(self):
-        if(path.exists("/home/pi/proyectoLavamanos/datos/cbIniciarSinVideoLavado.pkl.pkl")):
+        if(path.exists("/home/pi/proyectoLavamanos/datos/cbIniciarSinVideoLavado.pkl")):
             entradaSerial = open('/home/pi/proyectoLavamanos/datos/cbIniciarSinVideoLavado.pkl','rb')
             self.cbIniciarSinVideoLavado.setChecked(pickle.load(entradaSerial))
 
