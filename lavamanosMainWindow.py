@@ -72,7 +72,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         self.inicializarListaDeVideos()
         self.inicializarListViewDeVideos()
         self.checkIniciarSinPublicidadHabilitado()
-        self.checkIniciarSinPublicidadHabilitado()
+        self.checkIniciarSinVideoLavadoHabilitado()
         self.checkAutoInicioHabilitado()
 
     def inicializarListaDeVideos(self):
@@ -210,6 +210,7 @@ class lavamanosMainWindow(QtWidgets.QMainWindow, mainWindow):
         #dialogDeMensajes.showMinimized()
         #dialogDeMensajes.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         dialogDeMensajes.setEjecutarSinPublicidad(self.cbIniciarSinPublicidad.isChecked())
+        dialogDeMensajes.setBanderaSinVideoLavado(self.cbIniciarSinVideoLavado.isChecked())
         dialogDeMensajes.setListaDeReproduccion(self.listaDeVideos)
         #dialogDeMensajes.showMinimized()
         QtGui.QGuiApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
