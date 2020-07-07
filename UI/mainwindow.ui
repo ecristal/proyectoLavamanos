@@ -177,9 +177,9 @@
    <widget class="QCheckBox" name="cbIniciarSinVideoLavado">
     <property name="geometry">
      <rect>
-      <x>310</x>
+      <x>290</x>
       <y>10</y>
-      <width>171</width>
+      <width>191</width>
       <height>26</height>
      </rect>
     </property>
