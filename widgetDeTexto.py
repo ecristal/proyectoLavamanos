@@ -65,7 +65,10 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.mediaPlayer.set_xwindow(self.widgetReproductorDePublicidad.winId())
 
         self.timerInicioDeSecuenciaLavado = QtCore.QTimer()
-        self.timerInicioDeSecuenciaLavado.timeout.connect(self.timeoutTimerInicioDeSecuencia)
+        self.timerInicioDeSecuenciaLavado.timeout.connect(self.timeoutTimerInicioDeSecuencia
+
+        self.timerInicioDeSecuenciaLavadoSinVideoLavado = QtCore.QTimer()
+        self.timerInicioDeSecuenciaLavadoSinVideoLavado.timeout.connect(self.timeoutTimerInicioDeSecuenciaSinVideoLavado)
 
         self.timerUnSegundoLavado = QtCore.QTimer()
         self.timerUnSegundoLavado.timeout.connect(self.timeoutTimerUnSegundoLavado)
@@ -118,6 +121,8 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.tiempoSecadoDeManos = 0
         self.tiempoMensajeFinal = 0
         self.tiempoJabon = 0
+        self.banderaSinVideoLavado = 0 
+        self.banderaEjecucionSinVideoLavado = 0
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
@@ -145,7 +150,12 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
             self.timerDispensandoJabon.start(self.tiempoJabon)
 
     def timeoutTimerCheckSensorAgua(self):
-        if ((not GPIO.input(self.in_pin_agua)) and self.banderaEjecucionSecuenciaLavado == 0):
+
+    	if ((not GPIO.input(self.in_pin_agua)) and banderaSinVideoLavado == (True) and self.banderaEjecucionSinVideoLavado == 0)
+    		self.banderaEjecucionSinVideoLavado = 1
+    		self.inicioDeSecuenciaDeLavadoSinVideoLavado()
+
+        else if ((not GPIO.input(self.in_pin_agua)) and self.banderaEjecucionSecuenciaLavado == 0):
             self.banderaEjecucionSecuenciaLavado = 1
             self.inicioDeSecuenciaDeLavado()
             #self.mediaListPlayer.pause()
@@ -168,6 +178,15 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
         self.mediaPlayerLavamanos.set_media(self.media)
         self.mediaPlayerLavamanos.play()
         self.timerPausaInicialDeVideo.start(500)
+
+    def inicioDeSecuenciaDeLavadoSinVideoLavado(self):
+    	GPIO.output(25,GPIO.LOW)
+    	self.timerInicioDeSecuenciaLavadoSinVideoLavado.start(self.tiempoCanillaAbiertaInicial)
+        
+    def timeoutTimerInicioDeSecuenciaSinVideoLavado(self):
+    	GPIO.output(25,GPIO.HIGH)
+    	self.timerInicioDeSecuenciaLavadoSinVideoLavado.stop()
+    	self.banderaEjecucionSinVideoLavado = 0
 
     def timeoutTimerInicioDeSecuencia(self):
         GPIO.output(25,GPIO.HIGH)
@@ -277,3 +296,6 @@ class widgetDeTexto(QtWidgets.QDialog, widget_ui_):
             self.mediaListPlayer.stop()
             self.mediaPlayerLavamanos.stop()
             self.accept()
+
+    def setBanderaSinVideoLavado(self, banderaSinVideoLavado):
+    	self.banderaSinVideoLavado = banderaSinVideoLavado
